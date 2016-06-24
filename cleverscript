@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+
+import os
+import re
+import subprocess
+import sys
+
+
+def run(cmd):
+    print("----------------------------------------------------------------------")
+    print("-- %s" % cmd)
+    print("----------------------------------------------------------------------")
+    if os.system(cmd) != 0:
+        raise Exception(cmd)
+
+
+# https://blog.codinghorror.com/sorting-for-humans-natural-sort-order
+def sort_human(l):
+    convert = lambda text: int(text) if text.isdigit() else text
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+    l.sort(key=alphanum_key)
+
+
+repo = sys.argv[1]
+cleverconfig = None
+if len(sys.argv) > 2:
+    cleverconfig = sys.argv[2]
+
+name = os.path.splitext(os.path.basename(repo))[0]
+
+workdir = "/tmp/%s" % name
+run("mkdir -p %s" % workdir)
+os.chdir(workdir)
+
+run("git init")
+run("git fetch %s +refs/heads/*:refs/remotes/origin/*" % repo)
+run("git config remote.origin.url %s" % repo)
+run("git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*")
+
+tags = []
+for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
+    tag = os.path.basename(line)
+    if "cleverbuild" in tag:
+        tags.append(tag)
+
+# first build ever?
+if len(tags) == 0:
+    # yes!!
+    tags.append("cleverbuild-0")
+
+sort_human(tags)
+
+target_tag = tags[-1]
+
+run("git checkout %s" % target_tag)
+
+#build_number = int(re.findall("[0-9]+", tags[-1])[-1])
+#next_build_number = str(build_number+1)
+
+# CLEVER BUILD CONFIG IS NOT REALLY NEEDED.. CONFIG IS IMPLICIT
+#if cleverbuild_config:
+#    os.environ["CLEVERBUILD_CONFIG"] = cleverbuild_config
+# next build number
+#os.environ["CLEVERBUILD_NUMBER"] = next_build_number
+
+cleverscript = "./.cleverscript"
+if cleverconfig:
+    cleverscript += "-%s" % cleverconfig
+run(cleverscript)
