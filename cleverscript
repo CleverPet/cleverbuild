@@ -7,9 +7,8 @@ import sys
 
 
 def run(cmd):
-    #print("----------------------------------------------------------------------")
+    print("----------------------------------------------------------------------")
     print("# %s" % cmd)
-    #print("----------------------------------------------------------------------")
     if os.system(cmd) != 0:
         raise Exception(cmd)
 
@@ -22,10 +21,6 @@ def sort_human(l):
 
 
 repo = sys.argv[1]
-cleverconfig = None
-if len(sys.argv) > 2:
-    cleverconfig = sys.argv[2]
-
 name = os.path.splitext(os.path.basename(repo))[0]
 
 workdir = "/tmp/%s" % name
@@ -45,16 +40,17 @@ for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communic
 
 sort_human(tags)
 
-run("git checkout %s" % tags[-1])
-
 build_number = int(re.findall("[0-9]+", tags[-1])[-1])
 os.environ["CLEVERBUILD_NUMBER"] = str(build_number)
+
+# checkout
+run("git checkout %s" % tags[-1])
 
 # cleverbuild
 run("./.cleverbuild")
 
 # cleverscript
 cleverscript = "./.cleverscript"
-if cleverconfig:
-    cleverscript += "-%s" % cleverconfig
+if len(sys.argv) > 2:
+    cleverscript += "-%s" % sys.argv[2]
 run(cleverscript)
