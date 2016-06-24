@@ -1,1 +1,1 @@
-https://github.com/rrizun/clevertools/wiki
+https://github.com/CleverPet/clevertools/wiki
