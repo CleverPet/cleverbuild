@@ -18,3 +18,7 @@ cleverpet-new-android-app..
 cleverbuild might build a .apk file;
 cleverdeploy might upload the .apk file to play store as "alpha";
 cleverdeploy might promote apk from alpha to beta or from beta to production
+
+= Tips
+
+.cleverbuild scripts should be "fail fast", e.g., use #!/bin/sh -e
