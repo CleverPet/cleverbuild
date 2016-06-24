@@ -22,6 +22,11 @@ cleverpet-new-android-app..
 2. cleverscript might upload the .apk file to play store as "alpha";
 3. cleverscript might promote apk from alpha to beta or from beta to production
 
-= Tips
+cleverpet-admin..
+
+1. cleverbuild compiles java sources to java classes
+2. .cleverscript-update-dev runs appcfg.py to dev
+
+# Tips
 
 clevertools scripts should be "fail fast", e.g., use #!/bin/sh -e
