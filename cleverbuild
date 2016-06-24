@@ -22,12 +22,12 @@ def sort_human(l):
 
 
 repo = sys.argv[1]
-cleverbuild_config = None
+cleverconfig = None
 if len(sys.argv) > 2:
-    cleverbuild_config = sys.argv[2]
+    cleverconfig = sys.argv[2]
 
-print repo
-print cleverbuild_config
+#print repo
+#print cleverbuild_config
 
 name = os.path.splitext(os.path.basename(repo))[0]
 
@@ -46,27 +46,31 @@ for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communic
     tag = os.path.basename(line)
     if "cleverbuild" in tag:
         tags.append(tag)
+
+# first build ever?
 if len(tags) == 0:
+    # yes!!
     tags.append("cleverbuild-0")
 
 sort_human(tags)
 
-major = 0
-minor = 9
-patch = int(re.findall("[0-9]+", tags[-1])[-1])
-cleverbuild_number = str(patch+1)
+build_number = int(re.findall("[0-9]+", tags[-1])[-1])
+next_build_number = str(build_number+1)
 
+# CLEVER BUILD CONFIG IS NOT REALLY NEEDED.. CONFIG IS IMPLICIT
+if cleverconfig:
+    os.environ["CLEVERBUILD_CONFIG"] = cleverconfig
 # next build number
-if cleverbuild_config:
-    os.environ["CLEVERBUILD_CONFIG"] = cleverbuild_config
-os.environ["CLEVERBUILD_NUMBER"] = cleverbuild_number
+os.environ["CLEVERBUILD_NUMBER"] = next_build_number
 
 cleverbuild_cmd = "./.cleverbuild"
-if cleverbuild_config:
-    cleverbuild_cmd += "-%s" % cleverbuild_config
+if cleverconfig:
+    cleverbuild_cmd += "-%s" % cleverconfig
 run(cleverbuild_cmd)
 
-newtag = "cleverbuild-%s" % cleverbuild_number
+newtag = "cleverbuild-%s" % next_build_number
 #newtag = ".".join(["cleverbuild-" + str(major), str(minor), str(patch + 1)])
 
 run("git tag %s" % newtag)
+
+run("git push --tags")
