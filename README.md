@@ -1,8 +1,8 @@
 # clevertools
 
-cleverbuild builds something new
+cleverbuild builds something new and tags repo
 
-cleverdeploy deploys something already built
+cleverdeploy deploys something already built (an existing tag)
 
 # Examples
 
