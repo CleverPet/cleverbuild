@@ -14,6 +14,7 @@ def run(cmd):
         raise Exception(cmd)
 
 
+# https://blog.codinghorror.com/sorting-for-humans-natural-sort-order
 def sort_human(l):
     convert = lambda text: int(text) if text.isdigit() else text
     alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
@@ -30,9 +31,9 @@ print cleverbuild_config
 
 name = os.path.splitext(os.path.basename(repo))[0]
 
-run("mkdir -p /tmp/%s" % name)
-
-os.chdir("/tmp/%s" % name)
+workdir = "/tmp/%s" % name
+run("mkdir -p %s" % workdir)
+os.chdir(workdir)
 
 run("git init")
 run("git fetch %s +refs/heads/*:refs/remotes/origin/*" % repo)
@@ -42,24 +43,30 @@ run("git checkout master")
 
 tags = []
 for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
-    tags.append(os.path.basename(line))
+    tag = os.path.basename(line)
+    if "cleverbuild" in tag:
+        tags.append(tag)
+if len(tags) == 0:
+    tags.append("cleverbuild-0")
 
 sort_human(tags)
 
 major = 0
 minor = 9
 patch = int(re.findall("[0-9]+", tags[-1])[-1])
+cleverbuild_number = str(patch+1)
 
 # next build number
 if cleverbuild_config:
     os.environ["CLEVERBUILD_CONFIG"] = cleverbuild_config
-os.environ["CLEVERBUILD_NUMBER"] = str(patch + 1)
+os.environ["CLEVERBUILD_NUMBER"] = cleverbuild_number
 
 cleverbuild_cmd = "./.cleverbuild"
 if cleverbuild_config:
     cleverbuild_cmd += "-%s" % cleverbuild_config
-run("./.cleverbuild")
+run(cleverbuild_cmd)
 
-newtag = ".".join(["v" + str(major), str(minor), str(patch + 1)])
+newtag = "cleverbuild-%s" % cleverbuild_number
+#newtag = ".".join(["cleverbuild-" + str(major), str(minor), str(patch + 1)])
 
 run("git tag %s" % newtag)
