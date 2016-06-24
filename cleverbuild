@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+
+import os
+import re
+import subprocess
+import sys
+
+def run(cmd):
+	print("----------------------------------------------------------------------")
+	print(cmd)
+	print("----------------------------------------------------------------------")
+	if os.system(cmd) != 0:
+		raise Exception(cmd)
+
+# > git init /usr/share/tomcat7/.jenkins/jobs/cleverpet-new-android-app/workspace # timeout=10
+#Fetching upstream changes from git@github.com:CleverPet/cleverpet-new-android-app.git
+# > git --version # timeout=10
+#using GIT_SSH to set credentials 
+# > git -c core.askpass=true fetch --tags --progress git@github.com:CleverPet/cleverpet-new-android-app.git +refs/heads/*:refs/remotes/origin/*
+# > git config remote.origin.url git@github.com:CleverPet/cleverpet-new-android-app.git # timeout=10
+# > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+# > git config remote.origin.url git@github.com:CleverPet/cleverpet-new-android-app.git # timeout=10
+#Fetching upstream changes from git@github.com:CleverPet/cleverpet-new-android-app.git
+#using GIT_SSH to set credentials 
+# > git -c core.askpass=true fetch --tags --progress git@github.com:CleverPet/cleverpet-new-android-app.git +refs/heads/*:refs/remotes/origin/*
+# > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+# > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+#Checking out Revision 92cac868cbefe968c111fbd24044f6371b74d527 (refs/remotes/origin/master)
+# > git config core.sparsecheckout # timeout=10
+# > git checkout -f 92cac868cbefe968c111fbd24044f6371b74d527
+
+#def getLatestTag(repo):
+
+repo = sys.argv[1]
+name = os.path.splitext(os.path.basename(repo))[0]
+
+run("mkdir -p /tmp/"+name)
+
+os.chdir("/tmp/"+name)
+
+#run("git init")
+#run("git fetch "+repo+" +refs/heads/*:refs/remotes/origin/*")
+#run("git config remote.origin.url "+repo)
+#run("git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*")
+#run("git checkout master")
+#run("./.cleverbuild")
+
+def human( l ):
+	convert = lambda text: int(text) if text.isdigit() else text
+	alphanum_key = lambda key: [ convert(c) for c in re.split('([0-9]+)', key) ]
+	l.sort( key=alphanum_key )
+
+#run("asdf")
+
+tags=[]
+
+for line in subprocess.Popen(("git tag").split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
+	tags.append(os.path.basename(line))
+	
+human(tags)
+
+print tags[-1]
+
+major = 0
+minor = 9
+patch = int(re.findall("[0-9]+", tags[-1])[-1])
+
+print patch + 1
+
+newtag = ".".join(["v"+str(major), str(minor), str(patch+1)])
+
+print "newtag=", newtag
+run("git tag "+newtag)
