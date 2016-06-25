@@ -30,9 +30,9 @@ os.system("mkdir -p %s" % workdir)
 os.chdir(workdir)
 
 run("git init")
-run("git fetch %s +refs/heads/*:refs/remotes/origin/*" % repo)
 run("git config remote.origin.url %s" % repo)
 run("git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*")
+run("git fetch %s +refs/heads/*:refs/remotes/origin/*" % repo)
 
 tags = ["cleverbuild-0"]
 for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
@@ -47,7 +47,7 @@ next_build_number = build_number + 1
 os.environ["CLEVERBUILD_NUMBER"] = str(next_build_number)
 
 # checkout
-run("git checkout master")
+run("git checkout origin/master")
 
 # cleverbuild
 cleverbuild = "./.cleverbuild"
