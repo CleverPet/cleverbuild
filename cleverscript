@@ -20,7 +20,9 @@ def sort_human(l):
     l.sort(key=alphanum_key)
 
 
-repo = subprocess.Popen("git config --get remote.origin.url".split(), stdout=subprocess.PIPE).communicate()[0].splitlines()[0]
+# repo
+repo = sys.argv[1]
+# project name
 name = os.path.splitext(os.path.basename(repo))[0]
 
 workdir = "/tmp/%s" % name
@@ -47,10 +49,12 @@ os.environ["CLEVERBUILD_NUMBER"] = str(build_number)
 run("git checkout %s" % tags[-1])
 
 # cleverbuild
-run("./.cleverbuild")
+cleverbuild = "./.cleverbuild"
+if os.path.isfile(cleverbuild):
+    run(cleverbuild)
 
 # cleverscript
 cleverscript = "./.cleverscript"
-if len(sys.argv) > 1:
-    cleverscript += "-%s" % sys.argv[1]
+if len(sys.argv) > 2:
+    cleverscript += "-%s" % sys.argv[2]
 run(cleverscript)
