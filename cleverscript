@@ -30,9 +30,9 @@ os.system("mkdir -p %s" % workdir)
 os.chdir(workdir)
 
 run("git init")
-run("git fetch %s +refs/heads/*:refs/remotes/origin/*" % repo)
 run("git config remote.origin.url %s" % repo)
 run("git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*")
+run("git fetch %s +refs/heads/*:refs/remotes/origin/*" % repo)
 
 tags = ["cleverbuild-0"]
 for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
@@ -57,4 +57,5 @@ if os.path.isfile(cleverbuild):
 cleverscript = "./.cleverscript"
 if len(sys.argv) > 2:
     cleverscript += "-%s" % sys.argv[2]
-run(cleverscript)
+if os.path.isfile(cleverscript):
+    run(cleverscript)
