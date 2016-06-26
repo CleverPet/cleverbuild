@@ -4,11 +4,13 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 
 
 def run(cmd):
     print("----------------------------------------------------------------------")
     print("# %s" % cmd)
+    print("----------------------------------------------------------------------")
     if os.system(cmd) != 0:
         raise Exception(cmd)
 
@@ -20,40 +22,28 @@ def sort_human(l):
     l.sort(key=alphanum_key)
 
 
-# repo
-repo = sys.argv[1]
-# project name
-name = os.path.splitext(os.path.basename(repo))[0]
-
-workdir = "/tmp/%s" % name
-os.system("mkdir -p %s" % workdir)
-os.chdir(workdir)
-
-run("git init")
-run("git config remote.origin.url %s" % repo)
-run("git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*")
-run("git fetch %s +refs/heads/*:refs/remotes/origin/*" % repo)
+run("git fetch")
 
 tags = ["cleverbuild-0"]
 for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
     tag = os.path.basename(line)
     if "cleverbuild" in tag:
         tags.append(tag)
-
 sort_human(tags)
 
 build_number = int(re.findall("[0-9]+", tags[-1])[-1])
 next_build_number = build_number + 1
 os.environ["CLEVERBUILD_NUMBER"] = str(next_build_number)
 
-# checkout
-run("git checkout origin/master")
+# work_tree
+work_tree = tempfile.mkdtemp()
+run("git archive FETCH_HEAD | tar -x -C %s" % work_tree)
 
 # cleverbuild
-cleverbuild = "./.cleverbuild"
-if os.path.isfile(cleverbuild):
-    run(cleverbuild)
+cleverbuild = "./cleverbuild"
+run("cd %s && if [ -f %s ]; then %s; fi" % (work_tree, cleverbuild, cleverbuild))
 
-# tag
-run("git tag cleverbuild-%s" % next_build_number)
-run("git push --tags")
+# newtag
+newtag = "cleverbuild-%s" % next_build_number
+run("git tag %s FETCH_HEAD" % newtag)
+run("git push origin %s" % newtag)
