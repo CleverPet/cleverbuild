@@ -25,7 +25,7 @@ def sort_human(l):
 run("git fetch --tags")
 
 # get latest tag
-tags = ["cleverbuild-0"]
+tags = []
 for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
     tag = os.path.basename(line)
     if "cleverbuild" in tag:

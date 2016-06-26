@@ -25,19 +25,21 @@ def sort_human(l):
 run("git fetch --tags")
 
 # get latest tag
-tags = ["cleverbuild-0"]
+tags = []
 for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
     tag = os.path.basename(line)
     if "cleverbuild" in tag:
         tags.append(tag)
 sort_human(tags)
-tag = tags[-1]
 
 # compute diff
-run("! git diff --exit-code %s..FETCH_HEAD" % tag)
+if len(tags) > 0:
+    run("! git diff --exit-code %s..FETCH_HEAD" % tag)
 
 # compute new tag
-build_number = int(re.findall("[0-9]+", tag)[-1])
+build_number = 0
+if len(tags) > 0:
+    build_number = int(re.findall("[0-9]+", tags[-1])[-1])
 next_build_number = build_number + 1
 os.environ["CLEVERBUILD_NUMBER"] = str(next_build_number)
 newtag = "cleverbuild-%s" % next_build_number
@@ -55,4 +57,5 @@ run("git tag %s FETCH_HEAD" % newtag)
 run("git push origin %s" % newtag)
 
 # git log
-run("git log --oneline --decorate %s..%s" % (tag, newtag))
+if len(tags) > 0:
+    run("git log --oneline --decorate %s..%s" % (tags[-1], newtag))
