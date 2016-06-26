@@ -34,7 +34,7 @@ sort_human(tags)
 tag = tags[-1]
 
 # compute diff
-run("! git diff --exit-code %s FETCH_HEAD" % tag)
+run("! git diff --exit-code %s..FETCH_HEAD" % tag)
 
 # compute new tag
 build_number = int(re.findall("[0-9]+", tag)[-1])
@@ -54,4 +54,5 @@ run("cd %s && if [ -f %s ]; then %s; fi" % (work_tree, cleverbuild, cleverbuild)
 run("git tag %s FETCH_HEAD" % newtag)
 run("git push origin %s" % newtag)
 
-run("echo %s" % newtag)
+# git log
+run("git log --oneline --decorate %s..%s" % (tag, newtag))
