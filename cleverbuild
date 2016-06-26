@@ -34,7 +34,7 @@ sort_human(tags)
 
 # compute diff
 if len(tags) > 0:
-    run("! git diff --exit-code %s..FETCH_HEAD" % tag)
+    run("! git diff --exit-code %s..FETCH_HEAD" % tags[-1])
 
 # compute new tag
 build_number = 0
