@@ -47,3 +47,5 @@ run("cd %s && if [ -f %s ]; then %s; fi" % (work_tree, cleverbuild, cleverbuild)
 newtag = "cleverbuild-%s" % next_build_number
 run("git tag %s FETCH_HEAD" % newtag)
 run("git push origin %s" % newtag)
+
+run("echo %s" % newtag)
