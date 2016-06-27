@@ -48,6 +48,8 @@ run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, cleverbuild, cleverbuil
 cleverscript = ".cleverscript"
 if len(sys.argv) > 1:
     cleverscript += "-%s" % sys.argv[1]
-run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, cleverscript, cleverscript))
+    run("cd %s && ./%s" % (work_tree, cleverscript))
+else:
+    run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, cleverscript, cleverscript))
 
 run("echo %s" % tag)
