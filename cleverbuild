@@ -34,7 +34,7 @@ sort_human(tags)
 
 # compute diff
 if len(tags) > 0:
-    run("! git diff --exit-code %s..FETCH_HEAD" % tags[-1])
+    run("! git --no-pager diff --exit-code %s..FETCH_HEAD" % tags[-1])
 
 # compute new tag
 build_number = 0
@@ -58,4 +58,4 @@ run("git push origin %s" % newtag)
 
 # git log
 if len(tags) > 0:
-    run("git log --decorate %s..%s" % (tags[-1], newtag))
+    run("git --no-pager log --decorate %s..%s" % (tags[-1], newtag))
