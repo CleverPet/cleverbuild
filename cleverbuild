@@ -58,4 +58,4 @@ run("git push origin %s" % newtag)
 
 # git log
 if len(tags) > 0:
-    run("git log --oneline --decorate %s..%s" % (tags[-1], newtag))
+    run("git log --decorate %s..%s" % (tags[-1], newtag))
