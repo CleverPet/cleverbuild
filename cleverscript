@@ -28,7 +28,7 @@ parser.add_argument("cleverscript", nargs="?", default=None, help="cleverscript 
 parser.add_argument("--cleverbuild_number", help="the cleverbuild_number to run the cleverscript (default is latest cleverbuild_number)")
 args = parser.parse_args()
 
-run("git fetch --tags")
+#run("git fetch --tags")
 
 # get tag
 cleverbuild_number = args.cleverbuild_number
