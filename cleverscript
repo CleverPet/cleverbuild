@@ -45,7 +45,8 @@ tag = "cleverbuild-%s" % str(cleverbuild_number)
 os.environ["CLEVERBUILD_NUMBER"] = str(cleverbuild_number)
 
 # work_tree
-work_tree = tempfile.mkdtemp()
+os.system("mkdir -p /tmp/cleverbuild")
+work_tree = tempfile.mkdtemp(dir="/tmp/cleverbuild")
 run("git archive %s | tar -x -C %s" % (tag, work_tree))
 
 # run cleverbuild
