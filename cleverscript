@@ -31,6 +31,7 @@ args = parser.parse_args()
 #run("git fetch --tags")
 
 # get tag
+# ### TODO USE GIT DESCRIBE --TAGS (AND GET RID OF SORT_HUMAN) ?!?
 cleverbuild_number = args.cleverbuild_number
 if not cleverbuild_number:
     tags = []

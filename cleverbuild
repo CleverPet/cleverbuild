@@ -25,6 +25,7 @@ def sort_human(l):
 run("git fetch --tags")
 
 # get latest tag
+# ### TODO USE GIT DESCRIBE --TAGS (AND GET RID OF SORT_HUMAN) ?!?
 tags = []
 for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
     tag = os.path.basename(line)
