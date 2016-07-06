@@ -44,6 +44,9 @@ if not cleverbuild_number:
 
 tag = "cleverbuild-%s" % str(cleverbuild_number)
 os.environ["CLEVERBUILD_NUMBER"] = str(cleverbuild_number)
+git_commit_cmd = "git rev-parse %s" % tags[-1]
+git_commit = subprocess.Popen(git_commit_cmd.split(), stdout=subprocess.PIPE).communicate()[0].splitlines()[0]
+os.environ["GIT_COMMIT"] = git_commit
 
 # work_tree
 os.system("mkdir -p %s/cleverbuild" % tempfile.gettempdir())
@@ -62,4 +65,4 @@ if args.cleverscript:
 else:
     run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, dot_cleverscript, dot_cleverscript))
 
-run("echo %s" % tag)
+run("echo %s %s" % (git_commit, tag))
