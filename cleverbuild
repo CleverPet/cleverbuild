@@ -50,8 +50,8 @@ work_tree = tempfile.mkdtemp(dir="/tmp/cleverbuild")
 run("git archive FETCH_HEAD | tar -x -C %s" % work_tree)
 
 # run cleverbuild
-cleverbuild = ".cleverbuild"
-run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, cleverbuild, cleverbuild))
+dot_cleverbuild = ".cleverbuild"
+run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, dot_cleverbuild, dot_cleverbuild))
 
 # git tag
 run("git tag %s FETCH_HEAD" % newtag)

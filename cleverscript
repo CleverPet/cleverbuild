@@ -50,15 +50,15 @@ work_tree = tempfile.mkdtemp(dir="/tmp/cleverbuild")
 run("git archive %s | tar -x -C %s" % (tag, work_tree))
 
 # run cleverbuild
-cleverbuild = ".cleverbuild"
-run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, cleverbuild, cleverbuild))
+dot_cleverbuild = ".cleverbuild"
+run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, dot_cleverbuild, dot_cleverbuild))
 
 # run cleverscript
-cleverscript = ".cleverscript"
+dot_cleverscript = ".cleverscript"
 if args.cleverscript:
-    cleverscript += "-%s" % args.cleverscript
-    run("cd %s && ./%s" % (work_tree, cleverscript))
+    dot_cleverscript += "-%s" % args.cleverscript
+    run("cd %s && ./%s" % (work_tree, dot_cleverscript))
 else:
-    run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, cleverscript, cleverscript))
+    run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, dot_cleverscript, dot_cleverscript))
 
 run("echo %s" % tag)
