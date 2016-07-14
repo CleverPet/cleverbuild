@@ -35,7 +35,7 @@ sort_human(tags)
 
 # compute diff
 if len(tags) > 0:
-    run("! git --no-pager diff --exit-code %s..FETCH_HEAD" % tags[-1])
+    run("! git --no-pager diff --exit-code %s..origin/master" % tags[-1])
 
 # compute new tag
 build_number = 0
@@ -43,7 +43,7 @@ if len(tags) > 0:
     build_number = int(re.findall("[0-9]+", tags[-1])[-1])
 next_build_number = build_number + 1
 os.environ["CLEVERBUILD_NUMBER"] = str(next_build_number)
-git_commit_cmd = "git rev-parse FETCH_HEAD"
+git_commit_cmd = "git rev-parse origin/master"
 git_commit = subprocess.Popen(git_commit_cmd.split(), stdout=subprocess.PIPE).communicate()[0].splitlines()[0]
 os.environ["GIT_COMMIT"] = git_commit
 newtag = "cleverbuild-%s" % next_build_number
@@ -51,14 +51,14 @@ newtag = "cleverbuild-%s" % next_build_number
 # work_tree
 os.system("mkdir -p %s/cleverbuild" % tempfile.gettempdir())
 work_tree = tempfile.mkdtemp(dir="%s/cleverbuild" % tempfile.gettempdir())
-run("git archive FETCH_HEAD | tar -x -C %s" % work_tree)
+run("git archive origin/master | tar -x -C %s" % work_tree)
 
 # run cleverbuild
 dot_cleverbuild = ".cleverbuild"
 run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, dot_cleverbuild, dot_cleverbuild))
 
 # git tag
-run("git tag %s FETCH_HEAD" % newtag)
+run("git tag %s origin/master" % newtag)
 run("git push origin %s" % newtag)
 
 # git log
