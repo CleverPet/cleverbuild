@@ -58,11 +58,11 @@ dot_cleverbuild = ".cleverbuild"
 run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, dot_cleverbuild, dot_cleverbuild))
 
 # run cleverscript
-dot_cleverscript = ".cleverscript"
+cleverscript = ".cleverscript"
 if args.cleverscript:
-    dot_cleverscript += "-%s" % args.cleverscript
-    run("cd %s && ./%s" % (work_tree, dot_cleverscript))
+    cleverscript = args.cleverscript
+    run("cd %s && ./%s" % (work_tree, cleverscript))
 else:
-    run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, dot_cleverscript, dot_cleverscript))
+    run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, cleverscript, cleverscript))
 
 run("echo %s %s" % (git_commit, tag))
