@@ -1,2 +1,2 @@
 import setuptools
-setuptools.setup(name="clevertools", scripts=["cleverbuild", "cleverscript"])
+setuptools.setup(name="cleverbuild", scripts=["cleverbuild", "cleverscript"])
