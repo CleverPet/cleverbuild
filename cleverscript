@@ -4,23 +4,22 @@ import argparse
 import os
 import re
 import subprocess
-# import sys
 import tempfile
 
 
 def run(cmd):
     print("----------------------------------------------------------------------")
-    print("# %s" % cmd)
+    print("%s" % cmd)
     print("----------------------------------------------------------------------")
     if os.system(cmd) != 0:
         raise Exception(cmd)
 
 
-# https://blog.codinghorror.com/sorting-for-humans-natural-sort-order
-def sort_human(l):
-    convert = lambda text: int(text) if text.isdigit() else text
-    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
-    l.sort(key=alphanum_key)
+# # https://blog.codinghorror.com/sorting-for-humans-natural-sort-order
+# def sort_human(l):
+#     convert = lambda text: int(text) if text.isdigit() else text
+#     alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+#     l.sort(key=alphanum_key)
 
 
 parser = argparse.ArgumentParser(description="Run a clever script.")
@@ -28,25 +27,32 @@ parser.add_argument("cleverscript", nargs="?", default=None, help="cleverscript 
 parser.add_argument("--cleverbuild_number", help="the cleverbuild_number to run the cleverscript (default is latest cleverbuild_number)")
 args = parser.parse_args()
 
-#run("git fetch --tags")
+git_branch = subprocess.Popen("git rev-parse --abbrev-ref HEAD".split(), stdout=subprocess.PIPE).communicate()[0].splitlines()[0]
 
-# get tag
-# ### TODO USE GIT DESCRIBE --TAGS (AND GET RID OF SORT_HUMAN) ?!?
+# get latest tag
 cleverbuild_number = args.cleverbuild_number
 if not cleverbuild_number:
-    tags = []
+    branch_tags = {}
     for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
         tag = os.path.basename(line)
-        if "cleverbuild" in tag:
-            tags.append(tag)
-    sort_human(tags)
-    cleverbuild_number = int(re.findall("[0-9]+", tags[-1])[-1])
+        num = int(re.findall("[0-9]+", tag)[-1])
+        if "cleverbuild-%s-" % git_branch in tag:
+            branch_tags[num] = tag
+    cleverbuild_number = int(re.findall("[0-9]+", branch_tags[sorted(branch_tags)[-1]])[-1])
 
-tag = "cleverbuild-%s" % str(cleverbuild_number)
+tag = "cleverbuild-%s-%s" % (git_branch, str(cleverbuild_number))
+os.environ["CLEVERBUILD_TAG"] = tag
 os.environ["CLEVERBUILD_NUMBER"] = str(cleverbuild_number)
+
+# DEPRECATED
+# DEPRECATED
+# DEPRECATED
 git_commit_cmd = "git rev-parse %s" % tag
 git_commit = subprocess.Popen(git_commit_cmd.split(), stdout=subprocess.PIPE).communicate()[0].splitlines()[0]
 os.environ["GIT_COMMIT"] = git_commit
+# DEPRECATED
+# DEPRECATED
+# DEPRECATED
 
 # work_tree
 os.system("mkdir -p %s/cleverbuild" % tempfile.gettempdir())
@@ -65,4 +71,4 @@ if args.cleverscript:
 else:
     run("cd %s && if [ -f %s ]; then ./%s; fi" % (work_tree, cleverscript, cleverscript))
 
-run("echo %s %s" % (git_commit, tag))
+run("echo %s" % tag)
