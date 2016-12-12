@@ -15,11 +15,8 @@ def run(cmd):
         raise Exception(cmd)
 
 
-# # https://blog.codinghorror.com/sorting-for-humans-natural-sort-order
-# def sort_human(l):
-#     convert = lambda text: int(text) if text.isdigit() else text
-#     alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
-#     l.sort(key=alphanum_key)
+def scrub(s):
+    return re.sub('[^A-Za-z0-9]', '-', s)
 
 
 parser = argparse.ArgumentParser(description="Run a clever script.")
@@ -41,7 +38,7 @@ if not cleverbuild_number:
     cleverbuild_number = int(re.findall("[0-9]+", branch_tags[sorted(branch_tags)[-1]])[-1])
 
 tag = "cleverbuild-%s-%s" % (git_branch, str(cleverbuild_number))
-os.environ["CLEVERBUILD_TAG"] = tag
+os.environ["CLEVERBUILD_BRANCH"] = scrub(git_branch)
 os.environ["CLEVERBUILD_NUMBER"] = str(cleverbuild_number)
 
 # DEPRECATED

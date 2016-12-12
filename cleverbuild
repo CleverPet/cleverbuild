@@ -14,11 +14,8 @@ def run(cmd):
         raise Exception(cmd)
 
 
-# # https://blog.codinghorror.com/sorting-for-humans-natural-sort-order
-# def sort_human(l):
-#     convert = lambda text: int(text) if text.isdigit() else text
-#     alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
-#     l.sort(key=alphanum_key)
+def scrub(s):
+    return re.sub('[^A-Za-z0-9]', '-', s)
 
 
 run("git fetch --tags")
@@ -47,8 +44,8 @@ if len(branch_tags) > 0:
 
 new_tag = "cleverbuild-%s-%s" % (git_branch, next_build_number)
 
-# set CLEVERBUILD_TAG env var
-os.environ["CLEVERBUILD_TAG"] = new_tag
+# set CLEVERBUILD_BRANCH env var
+os.environ["CLEVERBUILD_BRANCH"] = scrub(git_branch)
 
 # set CLEVERBUILD_NUMBER env var
 os.environ["CLEVERBUILD_NUMBER"] = str(next_build_number)
