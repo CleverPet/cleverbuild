@@ -37,7 +37,7 @@ if not cleverbuild_number:
             branch_tags[num] = tag
     cleverbuild_number = int(re.findall("[0-9]+", branch_tags[sorted(branch_tags)[-1]])[-1])
 
-tag = "cleverbuild-%s-%s" % (git_branch, str(cleverbuild_number))
+tag = "cleverbuild-%s-%s" % (scrub(git_branch), str(cleverbuild_number))
 os.environ["CLEVERBUILD_BRANCH"] = scrub(git_branch)
 os.environ["CLEVERBUILD_NUMBER"] = str(cleverbuild_number)
 

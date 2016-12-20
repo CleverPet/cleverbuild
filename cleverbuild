@@ -42,7 +42,7 @@ next_build_number = build_number + 1
 if len(branch_tags) > 0:
     run("! git --no-pager diff --exit-code %s..origin/%s" % (branch_tags[sorted(branch_tags)[-1]], git_branch))
 
-new_tag = "cleverbuild-%s-%s" % (git_branch, next_build_number)
+new_tag = "cleverbuild-%s-%s" % (scrub(git_branch), next_build_number)
 
 # set CLEVERBUILD_BRANCH env var
 os.environ["CLEVERBUILD_BRANCH"] = scrub(git_branch)
