@@ -25,6 +25,8 @@ parser.add_argument("--cleverbuild_number", help="the cleverbuild_number to run 
 args = parser.parse_args()
 
 git_branch = subprocess.Popen("git rev-parse --abbrev-ref HEAD".split(), stdout=subprocess.PIPE).communicate()[0].splitlines()[0]
+git_branch = git_branch.replace('/', '-') 
+git_branch = git_branch.replace('_', '-')
 
 # get latest tag
 cleverbuild_number = args.cleverbuild_number
