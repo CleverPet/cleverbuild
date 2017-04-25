@@ -26,10 +26,11 @@ all_tags = {}
 branch_tags = {}
 for line in subprocess.Popen("git tag".split(), stdout=subprocess.PIPE).communicate()[0].splitlines():
     tag = os.path.basename(line)
-    num = int(re.findall("[0-9]+", tag)[-1])
     if "cleverbuild" in tag:
+        num = int(re.findall("[0-9]+", tag)[-1])
         all_tags[num] = tag
     if "cleverbuild-%s-" % git_branch in tag:
+        num = int(re.findall("[0-9]+", tag)[-1])
         branch_tags[num] = tag
 
 # compute global tag
