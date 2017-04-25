@@ -25,8 +25,7 @@ parser.add_argument("--cleverbuild_number", help="the cleverbuild_number to run 
 args = parser.parse_args()
 
 git_branch = subprocess.Popen("git rev-parse --abbrev-ref HEAD".split(), stdout=subprocess.PIPE).communicate()[0].splitlines()[0]
-git_branch = git_branch.replace('/', '-') 
-git_branch = git_branch.replace('_', '-')
+git_branch = scrub(git_branch)
 
 # get latest tag
 cleverbuild_number = args.cleverbuild_number
@@ -39,8 +38,8 @@ if not cleverbuild_number:
             branch_tags[num] = tag
     cleverbuild_number = int(re.findall("[0-9]+", branch_tags[sorted(branch_tags)[-1]])[-1])
 
-tag = "cleverbuild-%s-%s" % (scrub(git_branch), str(cleverbuild_number))
-os.environ["CLEVERBUILD_BRANCH"] = scrub(git_branch)
+tag = "cleverbuild-%s-%s" % (git_branch, str(cleverbuild_number))
+os.environ["CLEVERBUILD_BRANCH"] = git_branch
 os.environ["CLEVERBUILD_NUMBER"] = str(cleverbuild_number)
 
 # DEPRECATED
